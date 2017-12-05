@@ -7,7 +7,7 @@ use think\Request;
 class User
 {
     /**
-     * 用户登录
+     * 用户登录接口
      * @return int 成功为1，失败为0
      */
     public function login()
@@ -22,4 +22,22 @@ class User
 
         return $result;
     }
+
+    /**
+     * 用户注册接口
+     * @return int 成功为1，用户名已存在返回-1，发生其他错误导致未插入成功时返回0
+     */
+    public function register()
+    {
+        $uModel   = Loader::model("User");
+        $userinfo = Request::instance()->param();
+        if (!empty($userinfo["username"]) && !empty($userinfo["password"])) {
+            $result = $uModel->register($userinfo["username"], $userinfo["password"]);
+        } else {
+            $result = 0;
+        }
+
+        return $result;
+    }
+
 }
