@@ -8,14 +8,14 @@ class User
 {
     /**
      * 用户登录接口
-     * @return int 成功为1，失败为0
+     * @return mixed 成功返回token，失败返回0
      */
     public function login()
     {
-        $uModel   = Loader::model("User");
+        $uModel   = Loader::model('User');
         $userinfo = Request::instance()->param();
-        if (!empty($userinfo["username"]) && !empty($userinfo["password"])) {
-            $result = $uModel->confirm($userinfo["username"], $userinfo["password"]);
+        if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
+            $result = $uModel->confirm($userinfo['username'], $userinfo['password']);
         } else {
             $result = 0;
         }
@@ -29,15 +29,14 @@ class User
      */
     public function register()
     {
-        $uModel   = Loader::model("User");
+        $uModel   = Loader::model('User');
         $userinfo = Request::instance()->param();
-        if (!empty($userinfo["username"]) && !empty($userinfo["password"])) {
-            $result = $uModel->register($userinfo["username"], $userinfo["password"]);
+        if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
+            $result = $uModel->register($userinfo['username'], $userinfo['password']);
         } else {
             $result = 0;
         }
 
         return $result;
     }
-
 }

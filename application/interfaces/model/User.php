@@ -1,26 +1,35 @@
 <?php
 namespace app\interfaces\model;
 
+use think\Loader;
 use think\Model;
 
 class User extends Model
 {
-    protected $table    = "user";
-    protected $readonly = ["uid", "username", "password"];
+    protected $table    = 'user';
+    protected $readonly = ['uid', 'username', 'password'];
 
     /**
      * 登录验证
      * @param string $username 登录用的用户名
      * @param stirng $password 登录用的密码
-     * @return int 成功为1，失败为0
+     * @return mixed 成功返回token令牌，失败返回0
      */
     public function confirm($username, $password)
     {
-        $userinfo = $this->where("username", $username)
-            ->field(["username", "password"])
-            ->limit(1)->find()->data;
+        $userinfo = $this->where('username', $username)
+            ->field(['username', 'password'])
+            ->limit(1)->find();
 
-        if (!empty($userinfo) && $userinfo["username"] == $username && $userinfo["password"] == $password) {return 1;}
+        if (!empty($userinfo) &&
+            $userinfo->data['username'] == $username &&
+            $userinfo->data['password'] == hash('md5', $password)) {
+            $uSafety = Loader::model('Safety');
+            $token   = $uSafety->encrypt($username, $password);
+
+            return $token;
+        }
+
         return 0;
     }
 
@@ -32,8 +41,8 @@ class User extends Model
      */
     public function register($username, $password)
     {
-        $data     = ["username" => $username, "password" => $password];
-        $notExist = empty($this->where("username", $username)->find()->data);
+        $data     = ['username' => $username, 'password' => hash('md5', $password)];
+        $notExist = empty($this->where('username', $username)->find()->data);
         if ($notExist) {
             $result = $this->insert($data);
         } else {
@@ -43,4 +52,16 @@ class User extends Model
         return $result;
     }
 
+    /**
+     * 根据用户名获取用户id
+     * @param string $username
+     * @return int $uid
+     */
+    public function getUid($username)
+    {
+        $result = $this->where('username', $username)->limit(1)->find();
+        $uid    = $result->data['uid'];
+
+        return $uid;
+    }
 }
