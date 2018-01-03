@@ -3,11 +3,31 @@ namespace app\interfaces\model;
 
 use think\Loader;
 use think\Model;
+use think\Cache;
 
 class User extends Model
 {
     protected $table    = 'user';
     protected $readonly = ['uid', 'username', 'password'];
+
+    /**
+     * 用户注册
+     * @param string $username 新注册用户填写的用户名
+     * @param string $password 新注册用户填写的密码
+     * @return int 成功为1，用户名已存在返回-1，发生其他错误导致未插入成功时返回0
+     */
+    public function register($username, $password)
+    {
+        $data     = ['username' => $username, 'password' => hash('md5', $password)];
+        $notExist = empty($this->where('username', $username)->find()->data);
+        if ($notExist) {
+            $result = $this->insert($data);
+        } else {
+            $result = -1;
+        }
+
+        return $result;
+    }
 
     /**
      * 登录验证
@@ -34,20 +54,16 @@ class User extends Model
     }
 
     /**
-     * 用户注册
-     * @param string $username 新注册用户填写的用户名
-     * @param string $password 新注册用户填写的密码
-     * @return int 成功为1，用户名已存在返回-1，发生其他错误导致未插入成功时返回0
+     * 用户登出
+     * @param string $username
+     * @param string $token
+     * @return int $result
      */
-    public function register($username, $password)
+    public function logOut($username, $token)
     {
-        $data     = ['username' => $username, 'password' => hash('md5', $password)];
-        $notExist = empty($this->where('username', $username)->find()->data);
-        if ($notExist) {
-            $result = $this->insert($data);
-        } else {
-            $result = -1;
-        }
+        $uSafety = Loader::model('Safety');
+        $result  = $uSafety->match($username, $token);
+        if ($result) {Cache::rm($username);}
 
         return $result;
     }

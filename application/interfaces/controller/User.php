@@ -7,7 +7,7 @@ use think\Request;
 class User
 {
     /**
-     * 用户登录接口
+     * 用户登录
      * @return mixed 成功返回token，失败返回0
      */
     public function login()
@@ -24,8 +24,8 @@ class User
     }
 
     /**
-     * 用户注册接口
-     * @return int 成功为1，用户名已存在返回-1，发生其他错误导致未插入成功时返回0
+     * 用户注册
+     * @return int $result
      */
     public function register()
     {
@@ -39,4 +39,24 @@ class User
 
         return $result;
     }
+
+    /**
+     * 用户注销
+     * @return int $result 1成功，0失败
+     */
+    public function logOut()
+    {
+        $uUser    = Loader::model('User');
+        $username = Request::instance()->param()['username'];
+        $token    = Request::instance()->param()['token'];
+
+        if (!empty($username)) {
+            $result = $uUser->logOut($username, $token);
+        } else {
+            $result = -1;
+        }
+
+        return $result;
+    }
+
 }

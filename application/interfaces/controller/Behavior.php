@@ -7,8 +7,16 @@ use think\Request;
 class Behavior
 {
     /**
+     * 修改个人基本健康信息
+     */
+    public function modifyBasicInfo()
+    {
+        // TODO: 完善函数
+    }
+
+    /**
      * 获取个人基本健康信息
-     * @return json $basicInfo
+     * @return mixed $result
      */
     public function getBasicInfo()
     {
