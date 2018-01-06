@@ -16,7 +16,7 @@ class Safety extends Model
     {
         $result = 0;
         $token  = hash('md5', $username . $password . time() . "#12s%p");
-        if (Cache::set($username, $token, 300)) {
+        if (Cache::set($username, $token, 3600)) {
             $result = $token;
         }
 

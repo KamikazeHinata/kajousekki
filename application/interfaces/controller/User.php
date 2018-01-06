@@ -7,34 +7,44 @@ use think\Request;
 class User
 {
     /**
-     * 用户登录
-     * @return mixed 成功返回token，失败返回0
+     * 用户注册
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $password
+     * @return mixed $result
      */
-    public function login()
+    public function register()
     {
-        $uModel   = Loader::model('User');
+        $uUser    = Loader::model('User');
         $userinfo = Request::instance()->param();
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
-            $result = $uModel->confirm($userinfo['username'], $userinfo['password']);
+            $tmp    = $uUser->register($userinfo['username'], $userinfo['password']);
+            $result = $tmp == 1 ? ['statusCode', 1] : ($tmp == -1 ? ['msg' => "The username exist.", 'statusCode' => -1] : ['statusCode', 0]);
         } else {
-            $result = 0;
+            $result = ['statusCode', 0];
         }
 
         return $result;
     }
 
     /**
-     * 用户注册
-     * @return int $result
+     * 用户登录
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $password
+     * @return mixed $result
      */
-    public function register()
+    public function login()
     {
-        $uModel   = Loader::model('User');
+        $uUser    = Loader::model('User');
         $userinfo = Request::instance()->param();
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
-            $result = $uModel->register($userinfo['username'], $userinfo['password']);
+            $result = [
+                'msg'        => $uUser->confirm($userinfo['username'], $userinfo['password']),
+                'statusCode' => 1,
+            ];
         } else {
-            $result = 0;
+            $result = ['statusCode', 0];
         }
 
         return $result;
@@ -42,21 +52,43 @@ class User
 
     /**
      * 用户注销
-     * @return int $result 1成功，0失败
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $token
+     * @return mixed $result
      */
     public function logOut()
     {
         $uUser    = Loader::model('User');
         $username = Request::instance()->param()['username'];
         $token    = Request::instance()->param()['token'];
-
         if (!empty($username)) {
-            $result = $uUser->logOut($username, $token);
+            $result = ['statusCode', $uUser->logOut($username, $token)];
         } else {
-            $result = -1;
+            $result = ['statusCode', 0];
         }
 
         return $result;
     }
 
+    /**
+     * 删除用户
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $authority
+     * @return mixed $result
+     */
+    public function deleteUser()
+    {
+        $uUser     = Loader::model('User');
+        $username  = Request::instance()->param()['username'];
+        $authority = Request::instance()->param()['authority'];
+        if (!empty($username) && !empty($authority)) {
+            $result = ['statusCode', $uUser->deleteUser($username, $authority)];
+        } else {
+            $result = ['statusCode', 0];
+        }
+
+        return $result;
+    }
 }

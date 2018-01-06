@@ -1,14 +1,16 @@
 <?php
 namespace app\interfaces\model;
 
+use think\Cache;
 use think\Loader;
 use think\Model;
-use think\Cache;
 
 class User extends Model
 {
     protected $table    = 'user';
     protected $readonly = ['uid', 'username', 'password'];
+
+    private $superAdministorPw = "qazwsxedc";
 
     /**
      * 用户注册
@@ -20,8 +22,17 @@ class User extends Model
     {
         $data     = ['username' => $username, 'password' => hash('md5', $password)];
         $notExist = empty($this->where('username', $username)->find()->data);
+
         if ($notExist) {
-            $result = $this->insert($data);
+            $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
+            $uHealthyLevel     = Loader::model('HealthyLevel');
+            $insResult         = $this->insert($data);
+            if ($insResult > 0) {
+                $uid    = $this->getUid($username);
+                $result = $uBasicHealthyInfo->addUser($uid) & $uHealthyLevel->addUser($uid);
+            } else {
+                $result = 0;
+            }
         } else {
             $result = -1;
         }
@@ -64,6 +75,27 @@ class User extends Model
         $uSafety = Loader::model('Safety');
         $result  = $uSafety->match($username, $token);
         if ($result) {Cache::rm($username);}
+
+        return $result;
+    }
+
+    /**
+     * 删除用户
+     * @param string $username
+     * @param string $authorization  一般来说是token，也可以是超级管理员密码
+     * @return int $result
+     */
+    public function deleteUser($username, $authorization)
+    {
+        $uSafety = Loader::model('Safety');
+        if ($authorization == $this->superAdministorPw || $uSafety->match($username, $authorization)) {
+            $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
+            $uHealthyLevel     = Loader::model('HealthyLevel');
+            $uid               = $this->getUid($username);
+            $result            = $uBasicHealthyInfo->deleteUser($uid) & $uHealthyLevel->deleteUser($uid) & $this->where('uid', $uid)->delete();
+        } else {
+            $result = 0;
+        }
 
         return $result;
     }
