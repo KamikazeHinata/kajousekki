@@ -22,12 +22,12 @@ class Behavior
         $requestInfo       = Request::instance()->param();
 
         if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
-            $statusCode = $uBasicHealthyInfo->setBasicInfo($requestInfo['username'], $requestInfo['height'],
+            $statusCode = $uBasicHealthyInfo->setBasicInfo($username, $requestInfo['height'],
                 $requestInfo['weight'], $requestInfo['vital_capacity'], $requestInfo['token']);
         } else {
             $statusCode = 0;
         }
-        $result = ['statusCode', $statusCode]
+        $result = ['statusCode', $statusCode];
 
         return $result;
     }
@@ -45,12 +45,16 @@ class Behavior
         $requestInfo       = Request::instance()->param();
 
         if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
-            $statusCode = $uBasicHealthyInfo->getBasicInfo($requestInfo['username'],
+            $msg = $uBasicHealthyInfo->getBasicInfo($requestInfo['username'],
                 $requestInfo['token']);
+            if (is_array($msg)) {
+                $result = ['msg' => $msg, 'statusCode' => 1];
+            } else {
+                $result = ['statusCode', 0];
+            }
         } else {
-            $statusCode = 0;
+            $statusCode = ['statusCode', 0];
         }
-        $result = ['statusCode', $statusCode]
 
         return $result;
     }
