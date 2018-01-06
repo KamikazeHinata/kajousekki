@@ -16,18 +16,21 @@ class Behavior
      *   @param string $vital_capacity
      * @return mixed $result
      */
-    public function modifyBasicInfo()
+    public function setBasicInfo()
     {
         $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
         $requestInfo       = Request::instance()->param();
-
-        if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
-            $statusCode = $uBasicHealthyInfo->setBasicInfo($username, $requestInfo['height'],
-                $requestInfo['weight'], $requestInfo['vital_capacity'], $requestInfo['token']);
-        } else {
-            $statusCode = 0;
+        try {
+            if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
+                $statusCode = $uBasicHealthyInfo->setBasicInfo($requestInfo['height'], $requestInfo['height'],
+                    $requestInfo['weight'], $requestInfo['vital_capacity'], $requestInfo['token']);
+            } else {
+                $statusCode = 0;
+            }
+            $result = ['statusCode', $statusCode];
+        } catch (\Exception $e) {
+            $result = ['msg' => "Params missed!", 'statusCode' => 0];
         }
-        $result = ['statusCode', $statusCode];
 
         return $result;
     }

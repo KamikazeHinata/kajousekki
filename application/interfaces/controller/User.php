@@ -39,10 +39,12 @@ class User
         $uUser    = Loader::model('User');
         $userinfo = Request::instance()->param();
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
-            $result = [
-                'msg'        => $uUser->confirm($userinfo['username'], $userinfo['password']),
-                'statusCode' => 1,
-            ];
+            $msg = $uUser->confirm($userinfo['username'], $userinfo['password']);
+            if (is_int($msg)) {
+                $result = $msg;
+            } else {
+                $result = ['msg' => $msg, 'statusCode' => 1];
+            }
         } else {
             $result = ['statusCode', 0];
         }
