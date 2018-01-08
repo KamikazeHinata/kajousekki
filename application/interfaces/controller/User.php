@@ -41,7 +41,7 @@ class User
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
             $msg = $uUser->confirm($userinfo['username'], $userinfo['password']);
             if (is_int($msg)) {
-                $result = $msg;
+                $result = ['statusCode' => $msg];
             } else {
                 $result = ['msg' => $msg, 'statusCode' => 1];
             }
