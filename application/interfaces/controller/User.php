@@ -19,9 +19,9 @@ class User
         $userinfo = Request::instance()->param();
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
             $tmp    = $uUser->register($userinfo['username'], $userinfo['password']);
-            $result = $tmp == 1 ? ['statusCode', 1] : ($tmp == -1 ? ['msg' => "The username exist.", 'statusCode' => -1] : ['statusCode', 0]);
+            $result = $tmp == 1 ? ['statusCode' => 1] : ($tmp == -1 ? ['msg' => "The username exist.", 'statusCode' => -1] : ['statusCode' => 0]);
         } else {
-            $result = ['statusCode', 0];
+            $result = ['statusCode' => 0];
         }
 
         return $result;
@@ -46,7 +46,7 @@ class User
                 $result = ['msg' => $msg, 'statusCode' => 1];
             }
         } else {
-            $result = ['statusCode', 0];
+            $result = ['statusCode' => 0];
         }
 
         return $result;
@@ -67,7 +67,7 @@ class User
         if (!empty($username)) {
             $result = ['statusCode', $uUser->logOut($username, $token)];
         } else {
-            $result = ['statusCode', 0];
+            $result = ['statusCode' => 0];
         }
 
         return $result;
@@ -88,7 +88,7 @@ class User
         if (!empty($username) && !empty($authority)) {
             $result = ['statusCode', $uUser->deleteUser($username, $authority)];
         } else {
-            $result = ['statusCode', 0];
+            $result = ['statusCode' => 0];
         }
 
         return $result;

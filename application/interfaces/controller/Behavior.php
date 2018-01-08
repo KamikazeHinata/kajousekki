@@ -6,6 +6,12 @@ use think\Request;
 
 class Behavior
 {
+    protected $healthyIndex = [
+        "height",
+        "weight",
+        "vitalCapacity",
+    ];
+
     /**
      * 修改个人基本健康信息
      * 需要上传参数：
@@ -13,7 +19,7 @@ class Behavior
      *   @param string $token
      *   @param string $height
      *   @param string $weight
-     *   @param string $vital_capacity
+     *   @param string $vitalCapacity
      * @return mixed $result
      */
     public function setBasicInfo()
@@ -23,11 +29,11 @@ class Behavior
         try {
             if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
                 $statusCode = $uBasicHealthyInfo->setBasicInfo($requestInfo['height'], $requestInfo['height'],
-                    $requestInfo['weight'], $requestInfo['vital_capacity'], $requestInfo['token']);
+                    $requestInfo['weight'], $requestInfo['vitalCapacity'], $requestInfo['token']);
             } else {
                 $statusCode = 0;
             }
-            $result = ['statusCode', $statusCode];
+            $result = ['statusCode' => $statusCode];
         } catch (\Exception $e) {
             $result = ['msg' => "Params missed!", 'statusCode' => 0];
         }
@@ -53,10 +59,10 @@ class Behavior
             if (is_array($msg)) {
                 $result = ['msg' => $msg, 'statusCode' => 1];
             } else {
-                $result = ['statusCode', 0];
+                $result = ['statusCode' => 0];
             }
         } else {
-            $statusCode = ['statusCode', 0];
+            $statusCode = ['statusCode' => 0];
         }
 
         return $result;

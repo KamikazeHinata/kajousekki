@@ -42,11 +42,11 @@ class BasicHealthyInfo extends Model
      * @param string $username
      * @param string $height
      * @param string $weight
-     * @param string $vital_capacity
+     * @param string $vitalCapacity
      * @param string $token
      * @return mixed $result
      */
-    public function setBasicInfo($username, $height, $weight, $vital_capacity, $token)
+    public function setBasicInfo($username, $height, $weight, $vitalCapacity, $token)
     {
         $redis   = new \Redis();
         $uUser   = Loader::model('User');
@@ -56,7 +56,7 @@ class BasicHealthyInfo extends Model
         if ($matchResult) {
             $uid = $uUser->getUid($username);
             $this->where('uid', $uid)
-                ->update(['height' => $height, 'weight' => $weight, 'vital_capacity' => $vital_capacity]);
+                ->update(['height' => $height, 'weight' => $weight, 'vital_capacity' => $vitalCapacity]);
             $result = 1;
         } else {
             $result = 0;
