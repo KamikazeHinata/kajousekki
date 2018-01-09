@@ -32,9 +32,9 @@ class Safety extends Model
     public function match($username, $token)
     {
         if (!empty($username) && !empty($token)) {
-            $geniusToken = Cache::get($username, false);
-            if (!empty($geniusToken)) {
-                if ($geniusToken == $token) {
+            $geniuneToken = Cache::get($username, false);
+            if (!empty($geniuneToken)) {
+                if ($geniuneToken == $token) {
                     return true;
                 }
             }

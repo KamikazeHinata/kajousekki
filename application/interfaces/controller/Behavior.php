@@ -26,6 +26,7 @@ class Behavior
      *   @param string $height
      *   @param string $weight
      *   @param string $vitalCapacity
+     *   @param string $heartRate
      * @return mixed $result
      */
     public function setBasicInfo()
@@ -34,8 +35,8 @@ class Behavior
         $requestInfo       = Request::instance()->param();
         try {
             if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
-                $statusCode = $uBasicHealthyInfo->setBasicInfo($requestInfo['height'], $requestInfo['height'],
-                    $requestInfo['weight'], $requestInfo['vitalCapacity'], $requestInfo['token']);
+                $statusCode = $uBasicHealthyInfo->setBasicInfo($requestInfo['username'], $requestInfo['height'],
+                    $requestInfo['weight'], $requestInfo['vitalCapacity'], $requestInfo['heartRate'], $requestInfo['token']);
             } else {
                 $statusCode = 0;
             }
