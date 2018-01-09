@@ -25,11 +25,10 @@ class User extends Model
 
         if ($notExist) {
             $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
-            $uHealthyLevel     = Loader::model('HealthyLevel');
             $insResult         = $this->insert($data);
             if ($insResult > 0) {
                 $uid    = $this->getUid($username);
-                $result = $uBasicHealthyInfo->addUser($uid) & $uHealthyLevel->addUser($uid);
+                $result = $uBasicHealthyInfo->addUser($uid);
             } else {
                 $result = 0;
             }
@@ -72,8 +71,7 @@ class User extends Model
      */
     public function logOut($username, $token)
     {
-        if (Loader::model('Safety')->match($username, $token)) {$result = Cache::rm($username);}
-        else {$result = -2;}
+        if (Loader::model('Safety')->match($username, $token)) {$result = Cache::rm($username);} else { $result = -2;}
 
         return $result;
     }
@@ -89,9 +87,8 @@ class User extends Model
         $uSafety = Loader::model('Safety');
         if ($authorization == $this->superAdministorPw || $uSafety->match($username, $authorization)) {
             $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
-            $uHealthyLevel     = Loader::model('HealthyLevel');
             $uid               = $this->getUid($username);
-            $result            = $uBasicHealthyInfo->deleteUser($uid) & $uHealthyLevel->deleteUser($uid) & $this->where('uid', $uid)->delete();
+            $result            = $uBasicHealthyInfo->deleteUser($uid) & $this->where('uid', $uid)->delete();
         } else {
             $result = 0;
         }
