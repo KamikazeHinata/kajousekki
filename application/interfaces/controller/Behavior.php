@@ -6,10 +6,16 @@ use think\Request;
 
 class Behavior
 {
-    protected $healthyIndex = [
-        "height",
-        "weight",
-        "vitalCapacity",
+    // protected $healthyIndex = [
+    //     "height",
+    //     "weight",
+    //     "vitalCapacity",
+    //     "heartRate",
+    //     "bloodPressure",
+    // ];
+    protected $comFailMsg = [
+        'setBasicInfo' => "Set basic infomation failed.",
+        'getBasicInfo' => "Get basic infomation failed.",
     ];
 
     /**
@@ -33,7 +39,7 @@ class Behavior
             } else {
                 $statusCode = 0;
             }
-            $result = ['statusCode' => $statusCode];
+            $result = $statusCode == -2 ? ['msg' => "Token doesn't match the username.", 'statusCode' => -2] : ['statusCode' => $statusCode];
         } catch (\Exception $e) {
             $result = ['msg' => "Params missed!", 'statusCode' => 0];
         }
@@ -52,18 +58,65 @@ class Behavior
     {
         $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
         $requestInfo       = Request::instance()->param();
-
         if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
             $msg = $uBasicHealthyInfo->getBasicInfo($requestInfo['username'],
                 $requestInfo['token']);
             if (is_array($msg)) {
                 $result = ['msg' => $msg, 'statusCode' => 1];
+            } else if ($msg == -2) {
+                $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
             } else {
                 $result = ['statusCode' => 0];
             }
         } else {
-            $statusCode = ['statusCode' => 0];
+            $statusCode = ['msg' => "Username or token missed!", 'statusCode' => 0];
         }
+
+        return $result;
+    }
+
+    /**
+     * 获取健康等级
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $token
+     * @return mixed $result
+     */
+    public function getHealthyLevel()
+    {
+        $userinfo = Request::instance()->param();
+        $username = $userinfo['username'];
+        $token    = $userinfo['token'];
+
+        $uHealthyLevel = Loader::model('HealthyLevel');
+        $msg           = $uHealthyLevel->getStandard($username, $token);
+        if (!is_int($msg)) {
+            $result = ['msg' => $msg, 'statusCode' => 1];
+        } else if ($msg == -2) {
+            $reuslt = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
+        } else {
+            $result = ['msg' => "Fail to ge healthy level.", 'statusCode' => 0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * 卡路里计算
+     * 需要上传参数：食物和数量键值对，如鸡蛋：50，单位克
+     * @param mixed $foodinfo
+     * @return mixed $result
+     */
+    public function sumCalorie()
+    {
+        $uFoodCalorieInfo = Loader::model('FoodCalorieInfo');
+        $foodinfo         = Request::instance()->param();
+        $totCalorie       = 0;
+        foreach ($foodinfo as $x => $x_value) {
+            $calorie = $uFoodCalorieInfo->getFoodCalorie($x);
+            $totCalorie += $calorie * $x_value;
+        }
+        $result = ['msg' => $totCalorie, 'statusCode' => 1];
 
         return $result;
     }

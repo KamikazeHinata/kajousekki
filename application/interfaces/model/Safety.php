@@ -1,8 +1,8 @@
 <?php
 namespace app\interfaces\model;
 
-use think\Model;
 use think\Cache;
+use think\Model;
 
 class Safety extends Model
 {
@@ -27,18 +27,19 @@ class Safety extends Model
      * 检验用户名与令牌是否匹配
      * @param string $username
      * @param string $token
-     * @return mixed $result 成功返回1，匹配失败返回0
+     * @return bool $result 成功返回True，匹配失败返回false
      */
-    public function match($username, $token) {
+    public function match($username, $token)
+    {
         if (!empty($username) && !empty($token)) {
             $geniusToken = Cache::get($username, false);
             if (!empty($geniusToken)) {
                 if ($geniusToken == $token) {
-                    return 1;
+                    return true;
                 }
             }
         }
 
-        return 0;
+        return false;
     }
 }

@@ -72,9 +72,8 @@ class User extends Model
      */
     public function logOut($username, $token)
     {
-        $uSafety = Loader::model('Safety');
-        $result  = $uSafety->match($username, $token);
-        if ($result) {Cache::rm($username);}
+        if (Loader::model('Safety')->match($username, $token)) {$result = Cache::rm($username);}
+        else {$result = -2;}
 
         return $result;
     }

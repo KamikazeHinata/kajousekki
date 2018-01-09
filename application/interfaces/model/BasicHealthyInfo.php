@@ -48,18 +48,15 @@ class BasicHealthyInfo extends Model
      */
     public function setBasicInfo($username, $height, $weight, $vitalCapacity, $token)
     {
-        $redis   = new \Redis();
-        $uUser   = Loader::model('User');
-        $uSafety = Loader::model('Safety');
-
-        $matchResult = $uSafety->match($username, $token);
-        if ($matchResult) {
+        $redis = new \Redis();
+        $uUser = Loader::model('User');
+        if (Loader::model('Safety')->match($username, $token)) {
             $uid = $uUser->getUid($username);
             $this->where('uid', $uid)
                 ->update(['height' => $height, 'weight' => $weight, 'vital_capacity' => $vitalCapacity]);
             $result = 1;
         } else {
-            $result = 0;
+            $result = -2;
         }
 
         return $result;
@@ -73,18 +70,14 @@ class BasicHealthyInfo extends Model
      */
     public function getBasicInfo($username, $token)
     {
-        $redis   = new \Redis();
-        $uUser   = Loader::model('User');
-        $uSafety = Loader::model('Safety');
-
-        $matchResult = $uSafety->match($username, $token);
-        if ($matchResult) {
+        $uUser = Loader::model('User');
+        if (Loader::model('Safety')->match($username, $token)) {
             $uid    = $uUser->getUid($username);
             $result = $this->where('uid', $uid)
-                ->field(['height', 'weight', 'vital_capacity'])
+                ->field(['height', 'weight', 'vital_capacity', 'heart_rate'])
                 ->limit(1)->find()->data;
         } else {
-            $result = 0;
+            $result = -2;
         }
 
         return $result;

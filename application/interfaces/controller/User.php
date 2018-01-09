@@ -6,6 +6,13 @@ use think\Request;
 
 class User
 {
+    protected $comFailMsg = [
+        'register'   => "Register failed. :(",
+        'login'      => "Login failed. :(",
+        'logOut'     => "Logout failed. :(",
+        'deleteUser' => "Delete failed. :(",
+    ];
+
     /**
      * 用户注册
      * 需要上传参数：
@@ -19,9 +26,9 @@ class User
         $userinfo = Request::instance()->param();
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
             $tmp    = $uUser->register($userinfo['username'], $userinfo['password']);
-            $result = $tmp == 1 ? ['statusCode' => 1] : ($tmp == -1 ? ['msg' => "The username exist.", 'statusCode' => -1] : ['statusCode' => 0]);
+            $result = $tmp == 1 ? ['statusCode' => 1] : ($tmp == -1 ? ['msg' => "The username exist.", 'statusCode' => -1] : ['msg' => $this->comFailMsg['register'], 'statusCode' => 0]);
         } else {
-            $result = ['statusCode' => 0];
+            $result = ['msg' => $this->comFailMsg['register'], 'statusCode' => 0];
         }
 
         return $result;
@@ -41,12 +48,16 @@ class User
         if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
             $msg = $uUser->confirm($userinfo['username'], $userinfo['password']);
             if (is_int($msg)) {
-                $result = ['statusCode' => $msg];
+                if ($msg == -2) {
+                    $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
+                } else {
+                    $result = ['msg' => $this->comFailMsg['login'], 'statusCode' => 0];
+                }
             } else {
                 $result = ['msg' => $msg, 'statusCode' => 1];
             }
         } else {
-            $result = ['statusCode' => 0];
+            $result = ['msg' => $this->comFailMsg['login'], 'statusCode' => 0];
         }
 
         return $result;
@@ -65,9 +76,16 @@ class User
         $username = Request::instance()->param()['username'];
         $token    = Request::instance()->param()['token'];
         if (!empty($username)) {
-            $result = ['statusCode', $uUser->logOut($username, $token)];
+            $tmpResult = $uUser->logOut($username, $token);
+            if ($tmpResult == 1) {
+                $result = ['statusCode' => 1];
+            } else if ($tmpResult == -2) {
+                $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
+            } else {
+                $result = ['msg' => $this->comFailMsg['logOut'], 'statusCode' => 0];
+            }
         } else {
-            $result = ['statusCode' => 0];
+            $result = ['msg' => $this->comFailMsg['logOut'], 'statusCode' => 0];
         }
 
         return $result;
@@ -86,9 +104,16 @@ class User
         $username  = Request::instance()->param()['username'];
         $authority = Request::instance()->param()['authority'];
         if (!empty($username) && !empty($authority)) {
-            $result = ['statusCode', $uUser->deleteUser($username, $authority)];
+            $tmpResult = $uUser->deleteUser($username, $authority);
+            if ($tmpResult == 1) {
+                $result = ['statusCode' => 1];
+            } else if ($tmpResult == -2) {
+                $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
+            } else {
+                $result = ['msg' => $this->comFailMsg['deleteUser'], 'statusCode' => 0];
+            }
         } else {
-            $result = ['statusCode' => 0];
+            $result = ['msg' => $this->comFailMsg['deleteUser'], 'statusCode' => 0];
         }
 
         return $result;
