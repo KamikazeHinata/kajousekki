@@ -2,7 +2,6 @@
 namespace app\interfaces\model;
 
 use think\Loader;
-use think\Request;
 
 class File
 {
@@ -19,7 +18,7 @@ class File
         } else {
             $uid         = Loader::model('User')->getUid($username);
             $hashedUid   = hash('md5', $uid);
-            $rootUrl     = $_SERVER['SERVER_NAME'] . Request::instance()->root() . "/uploads/{$hashedUid}/medicalRecord/";
+            $rootUrl     = $_SERVER['SERVER_NAME'] . "/kajousekki/public/uploads/{$hashedUid}/medicalRecord/";
             $root        = "./uploads/{$hashedUid}/medicalRecord/";
             $imageUrlSet = [];
             foreach (scandir($root) as $subdir) {
