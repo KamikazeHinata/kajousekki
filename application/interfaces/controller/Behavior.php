@@ -94,7 +94,7 @@ class Behavior
         if (!is_int($msg)) {
             $result = ['msg' => $msg, 'statusCode' => 1];
         } else if ($msg == -2) {
-            $reuslt = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
+            $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
         } else {
             $result = ['msg' => "Fail to ge healthy level.", 'statusCode' => 0];
         }
@@ -118,6 +118,31 @@ class Behavior
             $totCalorie += $calorie * $x_value;
         }
         $result = ['msg' => $totCalorie, 'statusCode' => 1];
+
+        return $result;
+    }
+
+    /**
+     * 获取图片地址
+     * 需要上传参数：
+     *     @param string $username
+     *     @param string $token
+     * @return mixed $result
+     */
+    public function getMedicalRecord()
+    {
+        $username = Request::instance()->param()['username'];
+        $token    = Request::instance()->param()['token'];
+        $msg      = Loader::model("File")->getMedicalRecord($username, $token);
+        if (is_int($msg)) {
+            if ($msg == -2) {
+                $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
+            } else {
+                $result = ['msg' => "Fail to get medical record", 'statusCode' => 0];
+            }
+        } else {
+            $result = ['msg' => $msg, 'statusCode' => 1];
+        }
 
         return $result;
     }
