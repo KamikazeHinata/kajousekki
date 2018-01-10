@@ -54,7 +54,7 @@ class User
                     $result = ['msg' => $this->comFailMsg['login'], 'statusCode' => 0];
                 }
             } else {
-                $result = ['msg' => $msg, 'statusCode' => 1];
+                $result = ['token' => $msg, 'statusCode' => 1];
             }
         } else {
             $result = ['msg' => $this->comFailMsg['login'], 'statusCode' => 0];

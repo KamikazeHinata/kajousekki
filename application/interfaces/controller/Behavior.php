@@ -63,7 +63,7 @@ class Behavior
             $msg = $uBasicHealthyInfo->getBasicInfo($requestInfo['username'],
                 $requestInfo['token']);
             if (is_array($msg)) {
-                $result = ['msg' => $msg, 'statusCode' => 1];
+                $result = ['basicInfo' => $msg, 'statusCode' => 1];
             } else if ($msg == -2) {
                 $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
             } else {
@@ -92,7 +92,7 @@ class Behavior
         $uHealthyLevel = Loader::model('HealthyLevel');
         $msg           = $uHealthyLevel->getStandard($username, $token);
         if (!is_int($msg)) {
-            $result = ['msg' => $msg, 'statusCode' => 1];
+            $result = ['healthyLevel' => $msg, 'statusCode' => 1];
         } else if ($msg == -2) {
             $result = ['msg' => "Token doesn't match the username.", 'statusCode' => -2];
         } else {
@@ -117,7 +117,7 @@ class Behavior
             $calorie = $uFoodCalorieInfo->getFoodCalorie($x);
             $totCalorie += $calorie * $x_value;
         }
-        $result = ['msg' => $totCalorie, 'statusCode' => 1];
+        $result = ['totalCalorie' => $totCalorie, 'statusCode' => 1];
 
         return $result;
     }
@@ -141,7 +141,7 @@ class Behavior
                 $result = ['msg' => "Fail to get medical record", 'statusCode' => 0];
             }
         } else {
-            $result = ['msg' => $msg, 'statusCode' => 1];
+            $result = ['medicalRecord' => $msg, 'statusCode' => 1];
         }
 
         return $result;
