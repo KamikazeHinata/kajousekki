@@ -14,7 +14,7 @@ class File
      *     @param file $image
      * @return mixed $result
      */
-    public function uploadFile()
+    public function upload()
     {
         $username = Request::instance()->param()['username'];
         $token    = Request::instance()->param()['token'];
@@ -45,7 +45,7 @@ class File
      *     @param string $imgUrl       要删除的图片文件路径，以"20180110/blablabla.jpg"的形式上传
      * @return mixed $result
      */
-    public function deleteFile()
+    public function delete()
     {
         $username = Request::instance()->param()['username'];
         $token    = Request::instance()->param()['token'];

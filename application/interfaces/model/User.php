@@ -27,8 +27,12 @@ class User extends Model
             $uBasicHealthyInfo = Loader::model('BasicHealthyInfo');
             $insResult         = $this->insert($data);
             if ($insResult > 0) {
-                $uid    = $this->getUid($username);
-                $result = $uBasicHealthyInfo->addUser($uid);
+                $uid       = $this->getUid($username);
+                $result    = $uBasicHealthyInfo->addUser($uid);
+                $uploadDir = './uploads/' . hash('md5', $uid);
+                if (!is_dir($uploadDir)) {
+                    mkdir($uploadDir);
+                }
             } else {
                 $result = 0;
             }
