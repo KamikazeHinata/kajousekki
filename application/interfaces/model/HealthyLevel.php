@@ -93,7 +93,7 @@ class HealthyLevel extends Model
                         $healthyLevel['total'] += 1;
                     }
                     break;
-                case 'body_temperatue':
+                case 'body_temperature':
                     if ($value == 2) {
                         $healthyLevel['total'] += 5;
                     } else if ($value == 1 || $value == 3) {
