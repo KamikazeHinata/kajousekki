@@ -6,13 +6,6 @@ use think\Request;
 
 class Behavior
 {
-    // protected $healthyIndex = [
-    //     "height",
-    //     "weight",
-    //     "vitalCapacity",
-    //     "heartRate",
-    //     "bloodPressure",
-    // ];
     protected $comFailMsg = [
         'setBasicInfo' => "Set basic infomation failed.",
         'getBasicInfo' => "Get basic infomation failed.",
@@ -23,10 +16,13 @@ class Behavior
      * 需要上传参数：
      *   @param string $username
      *   @param string $token
-     *   @param string $height
-     *   @param string $weight
-     *   @param string $vitalCapacity
-     *   @param string $heartRate
+     *   @param int $height
+     *   @param int $weight
+     *   @param int $vitalCapacity
+     *   @param int $heartRate
+     *   @param string $bloodPressure
+     *   @param float $bloodSugar
+     *   @param float $bodyTemperature
      * @return mixed $result
      */
     public function setBasicInfo()
@@ -36,7 +32,8 @@ class Behavior
         try {
             if (!empty($requestInfo['username']) && !empty($requestInfo['token'])) {
                 $statusCode = $uBasicHealthyInfo->setBasicInfo($requestInfo['username'], $requestInfo['height'],
-                    $requestInfo['weight'], $requestInfo['vitalCapacity'], $requestInfo['heartRate'], $requestInfo['token']);
+                    $requestInfo['weight'], $requestInfo['vitalCapacity'], $requestInfo['heartRate'],
+                    $requestInfo['bloodPressure'], $requestInfo['bloodSugar'], $requestInfo['bodyTemperature'], $requestInfo['token']);
             } else {
                 $statusCode = 0;
             }
@@ -88,9 +85,7 @@ class Behavior
         $userinfo = Request::instance()->param();
         $username = $userinfo['username'];
         $token    = $userinfo['token'];
-
-        $uHealthyLevel = Loader::model('HealthyLevel');
-        $msg           = $uHealthyLevel->getStandard($username, $token);
+        $msg      = Loader::model('HealthyLevel')->getStandard($username, $token);
         if (!is_int($msg)) {
             $result = ['healthyLevel' => $msg, 'statusCode' => 1];
         } else if ($msg == -2) {

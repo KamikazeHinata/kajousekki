@@ -38,18 +38,22 @@ class HealthyLevel extends Model
     public function getStandard($username, $token, $gender = 1)
     {
         $healthyLevel = [
-            'heart_rate'     => 0,
-            'vital_capacity' => 0,
-            'bmi'            => 0,
-            'total'          => 0,
+            'heart_rate'       => 0,
+            'vital_capacity'   => 0,
+            'bmi'              => 0,
+            'body_temperature' => 0,
+            'total'            => 0,
         ];
-        $userHealthyInfo        = Loader::model('BasicHealthyInfo')->getBasicInfo($username, $token);
+        $userHealthyInfo = Loader::model('BasicHealthyInfo')->getBasicInfo($username, $token);
+        if (is_int($userHealthyInfo)) {return $userHealthyInfo;}
+
         $userHealthyInfo['bmi'] = $this->useBMI($userHealthyInfo['height'], $userHealthyInfo['weight']);
         $tablename              = $gender ? "healthy_index_reference_ma" : "healthy_index_reference_fe";
 
-        $standard['heart_rate']     = Db::table($tablename)->where('healthy_index_name', 'heart_rate')->find();
-        $standard['vital_capacity'] = Db::table($tablename)->where('healthy_index_name', 'vital_capacity')->find();
-        $standard['bmi']            = Db::table($tablename)->where('healthy_index_name', 'bmi')->find();
+        $standard['heart_rate']       = Db::table($tablename)->where('healthy_index_name', 'heart_rate')->find();
+        $standard['vital_capacity']   = Db::table($tablename)->where('healthy_index_name', 'vital_capacity')->find();
+        $standard['bmi']              = Db::table($tablename)->where('healthy_index_name', 'bmi')->find();
+        $standard['body_temperature'] = Db::table($tablename)->where('healthy_index_name', 'body_temperature')->find();
 
         foreach ($healthyLevel as $key => $value) {
             if ($key == 'total') {continue;}
@@ -67,10 +71,44 @@ class HealthyLevel extends Model
         }
 
         foreach ($healthyLevel as $key => $value) {
-            if ($key == 'total') {continue;}
-            $healthyLevel['total'] += $value;
+            switch ($key) {
+                case 'heart_rate':
+                    if ($value == 3) {
+                        $healthyLevel['total'] += 5;
+                    } else if ($value == 2 || $value == 4) {
+                        $healthyLevel['total'] += 3;
+                    } else {
+                        $healthyLevel['total'] += 1;
+                    }
+                    break;
+                case 'vital_capacity':
+                    $healthyLevel['total'] += $value;
+                    break;
+                case 'bmi':
+                    if ($value == 2) {
+                        $healthyLevel['total'] += 5;
+                    } else if ($value == 1 || $value == 3) {
+                        $healthyLevel['total'] += 4;
+                    } else {
+                        $healthyLevel['total'] += 1;
+                    }
+                    break;
+                case 'body_temperatue':
+                    if ($value == 2) {
+                        $healthyLevel['total'] += 5;
+                    } else if ($value == 1 || $value == 3) {
+                        $healthyLevel['total'] += 2;
+                    } else if ($value == 4) {
+                        $healthyLevel['total'] += 1;
+                    } else {
+                        $healthyLevel['total'] += 0;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
-        $healthyLevel['total'] = round($healthyLevel['total'] / (count($healthyLevel) - 1), 1);
+        $healthyLevel['total'] = round($healthyLevel['total'] / 4, 1);
 
         return $healthyLevel;
     }
