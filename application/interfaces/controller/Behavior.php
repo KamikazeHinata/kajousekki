@@ -112,9 +112,7 @@ class Behavior
             $perCalorie = 0;
             if (!empty($x_value)) {
                 $calorie = $uFoodCalorieInfo->getFoodCalorie($x);
-                var_dump($x_value);
                 $count = str_replace('"', '', $x_value);
-                var_dump($count);
                 $perCalorie = ($calorie * $count);
             }
             $totCalorie += $perCalorie;
