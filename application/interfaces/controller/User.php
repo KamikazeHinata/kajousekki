@@ -18,13 +18,15 @@ class User
      * 需要上传参数：
      *   @param string $username
      *   @param string $password
+     *   @param string $question
+     *   @param string $answer
      * @return mixed $result
      */
     public function register()
     {
         $uUser    = Loader::model('User');
         $userinfo = Request::instance()->param();
-        if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
+        if (!empty($userinfo['username']) && !empty($userinfo['password']) && !empty($userinfo['question']) && !empty($userinfo['answer'])) {
             $tmp    = $uUser->register($userinfo['username'], $userinfo['password']);
             $result = $tmp == 1 ? ['statusCode' => 1] : ($tmp == -1 ? ['msg' => "The username exist.", 'statusCode' => -1] : ['msg' => $this->comFailMsg['register'], 'statusCode' => 0]);
         } else {

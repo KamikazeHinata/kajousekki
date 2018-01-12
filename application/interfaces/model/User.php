@@ -20,7 +20,7 @@ class User extends Model
      * @param string $answer 新注册用户填写的密保答案
      * @return int 成功为1，用户名已存在返回-1，发生其他错误导致未插入成功时返回0
      */
-    public function register($username, $password, $question = "", $answer = "")
+    public function register($username, $password, $question, $answer)
     {
         $data     = ['username' => $username, 'password' => hash('md5', $password), 'question' => $question, 'answer' => $answer];
         $notExist = empty($this->where('username', $username)->find()->data);
