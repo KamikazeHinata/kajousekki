@@ -16,11 +16,13 @@ class User extends Model
      * 用户注册
      * @param string $username 新注册用户填写的用户名
      * @param string $password 新注册用户填写的密码
+     * @param string $question 新注册用户填写的密保问题
+     * @param string $answer 新注册用户填写的密保答案
      * @return int 成功为1，用户名已存在返回-1，发生其他错误导致未插入成功时返回0
      */
-    public function register($username, $password)
+    public function register($username, $password, $question = "", $answer = "")
     {
-        $data     = ['username' => $username, 'password' => hash('md5', $password)];
+        $data     = ['username' => $username, 'password' => hash('md5', $password), 'question' => $question, 'answer' => $answer];
         $notExist = empty($this->where('username', $username)->find()->data);
 
         if ($notExist) {
@@ -32,6 +34,11 @@ class User extends Model
                 $uploadDir = './uploads/' . hash('md5', $uid);
                 if (!is_dir($uploadDir)) {
                     mkdir($uploadDir);
+                }
+                if (file_exists('./default/avatar/avatar.jpg')) {
+                    $src = "./default/avatar/avatar.jpg";
+                    $tar = $uploadDir . "/ProfilePicture.jpg";
+                    @copy($src, $tar);
                 }
             } else {
                 $result = 0;

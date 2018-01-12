@@ -118,4 +118,62 @@ class User
 
         return $result;
     }
+    /**
+     * 查找密保问题
+     * 需要上传参数：
+     *   @param string $username
+     * @return string $question
+     */
+    public function findQuestion()
+    {
+        $uUser    = Loader::model('User');
+        $userinfo = Request::instance()->param();
+        if (!empty($userinfo['username'])) {
+            $question = $uUser->findQuestion($userinfo['username']);
+            $result   = ['question' => $question, 'statusCode' => 1];
+        } else {
+            $result = ['statusCode' => 0];
+        }
+
+        return $result;
+    }
+    /**
+     * 回答密保问题
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $answer
+     * @return string $question
+     */
+    public function answerMatch()
+    {
+        $uUser    = Loader::model('User');
+        $userinfo = Request::instance()->param();
+        if (!empty($userinfo['username']) && !empty($userinfo['answer'])) {
+            $result = $uUser->answerMatch($userinfo['username'], $userinfo['answer']);
+        } else {
+            $result = ['statusCode' => -2];
+        }
+
+        return $result;
+    }
+
+    /**
+     * 修改密码
+     * 需要上传参数：
+     *   @param string $username
+     *   @param string $password
+     * @return string $question
+     */
+    public function setPassword()
+    {
+        $uUser    = Loader::model('User');
+        $userinfo = Request::instance()->param();
+        if (!empty($userinfo['username']) && !empty($userinfo['password'])) {
+            $result = $uUser->setPassword($userinfo['username'], $userinfo['password']);
+        } else {
+            $result = ['statusCode' => 0];
+        }
+
+        return $result;
+    }
 }
